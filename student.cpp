@@ -19,7 +19,37 @@ student::student(const char name[], const char gnum[], const char grade[],
 }
 
 // load in files with data about students
-void student::load(fstream &file, student roster[], int &size, int &capactiy) {
+void student::load(fstream &file, student roster[], int &size, int &capacity) {
+	student newStudent;
+	char gnum[MAX_CHARS + 1];
+	char gnumFile[MAX_CHARS + 1];
+	char namesFile[MAX_CHARS + 1];
+	char assignmentsFile[MAX_CHARS + 1];
+
+	cout << "Enter the name of the gnums file up to 30 characters: ";
+	cin.getline(gnumFile, MAX_CHARS);
+	cout << "Enter the name of the names file up to 30 characters: ";
+    cin.getline(namesFile, MAX_CHARS);
+	cout << "Enter the name of the assignments file up to 30 characters: ";
+	cin.getline(assignmentsFile, MAX_CHARS);	
+
+	file.getline(gnum, MAX_CHARS);
+	newStudent.setGnum(gnum);
+
+	while(!file.eof() && size != capacity) {
+			file.get();
+			roster[size] = newStudent;
+			size++;
+
+			file.getline(gnum, MAX_CHARS);
+			newStudent.setGnum(gnum);
+	}
+	
+	addStudentNames(gnumFile, roster);
+	//addSubmissions() this may be the job of 
+
+
+		
 }
 
 // display information about all of our students
@@ -72,10 +102,31 @@ void student::setGrade(const char grade[]) {
 }
 
 //add a new assignment to this students submissions
-void student::addSubmission(student &student, assignment &submission, 
-				            int &size, int &capactiy) {
-	assignment assignment = submission;
+void student::addSubmission(fstream &inFile, student roster[]) {
+	int counter = 0;
+	char name[MAX_CHARS + 1];
+	char gnum[MAX_CHARS + 1];
+	assignment assignment;
 	
+	file.getline(name, MAX_CHARS);
+
+	while(!file.eof() && counter != size){
+	    file.getline(gnum, MAX_CHARS);
+		for(auto i = 0; i < size; i++) {
+				student newStudent = roster[0];
+				if(strcmp(newStudent.getGnum('f'), gnum) == 0) {
+						newStudent.setName(name);
+						break;
+				}
+				else {
+						continue;
+				}
+		}
+		file.getline(name, MAX_CHARS);
+		counter++;
+	}
+
+		
    if( size != capactiy) {
 	  this->submissions[size] = assignment;
 	  size++;
