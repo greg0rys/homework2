@@ -25,13 +25,19 @@ class student
 		void setName(const char name[]);
 		void setGnum(const char gnum[]);
 		void setGrade(const char grade[]);
-		void addSubmission(student &student,assignment &submission, int &size, int &capacity);
+		void addSubmission();
 	private:
 		char    name[MAX_CHARS + 1];
 		char    gnum[MAX_CHARS + 1];
 		char    grade[MAX_CHARS + 1];
 		int     size;
 		int     capacity;
+		int     numAssignments;
 		assignment submissions[MAX_SUBMISSIONS];
+		int 	readInGnums(fstream &file, int &size, int &capacity,
+							student roster[], const char fileName[]);
+		int 	readInNames(fstream &file, student roster[], const char fName[]);
+		int 	readInAssignments(fstream &file, student roster[],
+								 const char fileName[]);
 
 };
