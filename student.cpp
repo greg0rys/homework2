@@ -167,7 +167,58 @@ int student::readInNames(fstream &file, student roster[],
 
 int student::readInAssignments(fstream &file, student roster[], 
 								const char fileName[]) {
-		
+ 	char filePath [MAX_CHARS + 1];
+	char name[MAX_CHARS + 1];
+	char gnum[MAX_CHARS + 1];
+	int  grade = 0;
+	float weight = 0;
+	strcat(filePath, fileName);
+	int counter = 0;
+	assignment assignment;
+	student newStudent;
+	file.open(filePath);
+
+	if(!file) {
+			cout << "Error opening file: " << fileName << endl;
+			return false;
+	}
+
+	file.getline(name, MAX_CHARS, ',');
+	assignment.setName(name);
+	counter++;
+
+	while(!file.eof()) {
+			file.get();
+			file >> grade;
+			file.get();
+			file >> weight;
+			file.get();
+			file.getline(gnum, MAX_CHARS);
+			assignment.setGnum(gnum);
+			assignment.setGrade(grade);
+			assignment.setWeight(weight);
+			for(auto i = 0; i < size; i++) {
+				newStudent = roster[i];
+
+				if(strcmp(newStudent.gnum, assignment.getGnum) == 0
+					&& newStudent.getNumberOfAssignments() < MAX_SUBMISSIONS) {
+						newStudent.addSubmission[newStudent.getNumberOfAssignments()] = assignment;
+						newStudent.setNumberOfAssignments(1);
+					counter++;	
+				}
+			}
+			file.getline(name,MAX_CHARS, ',');
+	}
+
+	return counter();
+}
+
+void student::setNumberOfAssignments(int num) {
+		this->numAssignments += num;
+}
+
+int student::getNumberOfAssignments() {
+		return this->numAssignments;
 }
 
 //add a new assignment to this students submissions
