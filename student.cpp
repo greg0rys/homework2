@@ -6,7 +6,8 @@ student::student() {
 		memset(grade, 0, 1);
 		memset(submissions, 0, 1);
 		size = 0;
-		capacity = 0;
+		capacity = MAX_SUBMISSIONS;
+		numAssignments = 0;
 }
 
 student::student(const char name[], const char gnum[], const char grade[],
@@ -25,7 +26,9 @@ void student::load(fstream &file, student roster[], int &size, int &capacity) {
 	char gnumFile[MAX_CHARS + 1];
 	char namesFile[MAX_CHARS + 1];
 	char assignmentsFile[MAX_CHARS + 1];
-
+	int  numberOfGnums = 0;
+	int  numberOfStudentsAdded = 0;
+	int  numberOfAssignmentsLoaded = 0;
 	cout << "Enter the name of the gnums file up to 30 characters: ";
 	cin.getline(gnumFile, MAX_CHARS);
 	cout << "Enter the name of the names file up to 30 characters: ";
@@ -33,23 +36,15 @@ void student::load(fstream &file, student roster[], int &size, int &capacity) {
 	cout << "Enter the name of the assignments file up to 30 characters: ";
 	cin.getline(assignmentsFile, MAX_CHARS);	
 
-	file.getline(gnum, MAX_CHARS);
-	newStudent.setGnum(gnum);
+	numberOfGnums = readInGnums(file,gnumFile);
+	numberOfStudentsAdded = readInNames(file,namesFile);
+	numberOfAssignmentsLoaded = readInAssignments(file,assignmentsFile);
 
-	while(!file.eof() && size != capacity) {
-			file.get();
-			roster[size] = newStudent;
-			size++;
+	cout << "[" << numberOfGnums << " G-Numbers loaded ]" << endl;
+	cout << "[" << numberOfStudentsAdded << " names added to the roster ]"
+			<< endl;
+	cout << "[" << numberOfAssignmentsLoaded << " assignments added ]" << endl;
 
-			file.getline(gnum, MAX_CHARS);
-			newStudent.setGnum(gnum);
-	}
-	
-	addStudentNames(gnumFile, roster);
-	//addSubmissions() this may be the job of 
-
-
-		
 }
 
 // display information about all of our students
@@ -99,6 +94,33 @@ void student::setGnum(const char gnum[]) {
 // set this current students grade 
 void student::setGrade(const char grade[]) {
 	strcpy(this->grade, grade);
+}
+
+void student::readInGnums(fstream &file, int &size, student roster[],
+				char fileName[]) {
+	char filePath = './';
+	student newStudent;
+	char gnumber[MAX_CHARS + 1];	
+	strcat(filePath, fileName);
+	file.open(fileName);
+
+	if(!file) {
+			cout << "Error opening " << fileName << endl;
+			return false;
+	} 
+
+	file.getline(gnumber, MAX_CHARS);
+	newStudent.setGnum(gnumber);
+
+	while(!file.eof() && size != capacity) {
+			roster[size] = newStudent;
+			size++;
+
+			file.getline(gnumber, MAX_CHARS);
+			newStudent.setGnum(gnumber);
+	}
+
+
 }
 
 //add a new assignment to this students submissions
