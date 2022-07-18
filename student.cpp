@@ -96,13 +96,15 @@ void student::setGrade(const char grade[]) {
 	strcpy(this->grade, grade);
 }
 
-void student::readInGnums(fstream &file, int &size, student roster[],
-				char fileName[]) {
-	char filePath = './';
+int student::readInGnums(fstream &file, int &size, int &capacity,
+				student roster[], const char fileName[]) {
+	char filePath[MAX_CHARS + 1];
+	strcpy(filePath, "./");
 	student newStudent;
 	char gnumber[MAX_CHARS + 1];	
+	int counter = 1;
 	strcat(filePath, fileName);
-	file.open(fileName);
+	file.open(filePath);
 
 	if(!file) {
 			cout << "Error opening " << fileName << endl;
@@ -115,12 +117,57 @@ void student::readInGnums(fstream &file, int &size, student roster[],
 	while(!file.eof() && size != capacity) {
 			roster[size] = newStudent;
 			size++;
-
+			counter++;
 			file.getline(gnumber, MAX_CHARS);
 			newStudent.setGnum(gnumber);
 	}
+	return counter;
 
 
+}
+
+int student::readInNames(fstream &file, student roster[], 
+						const char fName[], int &capacity, int &size) {
+	char  name[MAX_CHARS + 1];
+	char  gnum[MAX_CHARS + 1];
+	char  filePath[MAX_CHARS + 1];
+	strcpy(filePath, "./");
+	strcat(filePath, fName);
+	int counter = 0;
+	student newStudent;
+
+	file.open(filePath);
+	if(!file) {
+			cout << "Error opening: " << fName << endl;
+			return false;
+	}
+
+	file.getline(name, MAX_CHARS, ',');
+	while(!file.eof() && counter != capacity) {
+		file.get();
+		file.getline(gnum, MAX_CHARS);
+		for(auto i = 0; i < size; i++) {
+				newStudent = roster[i];
+				if(strcmp(newStudent.getGnum(), gnum) == 0) {
+						newStudent.setName(name);
+						counter++;
+						break;
+				}
+				else {
+						continue;
+				}
+		}
+
+		file.getline(name, MAX_CHARS);
+	}
+
+	return counter;
+
+}
+
+int student::readInAssignments(fstream &file, student roster[], 
+								const char fileName[]) {
+		
 }
 
 //add a new assignment to this students submissions
