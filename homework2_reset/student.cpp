@@ -4,7 +4,6 @@ Student::Student() {
     memset(name, 0, MAX_CHARS);
     memset(gnum, 0, MAX_CHARS);
     memset(grade, 0, MAX_CHARS);
-    memset(submissions, 0, MAX_SUBMISSIONS);
     size = 0;
     capacity = 0;
     numAssignments = 0;
@@ -190,7 +189,34 @@ int Student::ReadInAssignments(fstream &file, Student *roster, int &size, const 
     return counter;
 }
 
+
+void Student::AddSubmission(Student &student, Assignment &assignment,
+                            int numOfAssignments){
+    char name[MAX_CHARS + 1] = {0};
+    student.GetName(name);
+
+    if(numOfAssignments < MAX_SUBMISSIONS) {
+        student.submissions[numOfAssignments] = assignment;
+    }
+    else {
+        cout << name << " alread has " << MAX_SUBMISSIONS << endl;
+    }
+}
 void Student::display(Student roster[], int size) {
     Student newStudent;
+    char name[MAX_CHARS + 1] = {0};
+    for(auto i = 0; i < size; i++) {
+        roster[i].GetName(name);
 
+        cout << name << endl;
+    }
+
+}
+
+void Student::gpa(Student roster[], int size) {
+    cout << "in gpa" << endl;
+}
+
+void Student::pct(Student roster[], int size) {
+    cout <<"PCT" << endl;
 }
