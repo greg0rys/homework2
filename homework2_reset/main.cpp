@@ -26,3 +26,5 @@ char menu() {
     char n = 'n';
     return n;
 }
+
+//# need to implement file reads
