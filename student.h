@@ -14,18 +14,20 @@ class student
 {
 	public:
 		student();
-		student(const char name[], const char gnum[], const char grade[]);
-		void load(fstream &file, student roster[], int &size, int &capcity);
+//		student(const char name[], const char gnum[], const char grade[]);
+		void load(fstream &file, student roster[], int &size, int &capacity);
 		void display(student roster[], int size);
 		void gpa(student roster[], int size);
 		void pct(student roster[], int size);
-		void getName(char name[]) const;
+//		void getName(char name[]) const;
 		void getGnum(char gnum[]) const;
-		void getGrade(char grade[]) const;
-		void setName(const char name[]);
+//		void getGrade(char grade[]) const;
+//		void setName(const char name[]);
 		void setGnum(const char gnum[]);
-		void setGrade(const char grade[]);
+//		void setGrade(const char grade[]);
 		void addSubmission();
+        int GetNumAssignments() const;
+        void SetNumAssignments(int numAssignments);
 	private:
 		char    name[MAX_CHARS + 1];
 		char    gnum[MAX_CHARS + 1];
@@ -36,8 +38,9 @@ class student
 		assignment submissions[MAX_SUBMISSIONS];
 		int 	readInGnums(fstream &file, int &size, int &capacity,
 							student roster[], const char fileName[]);
-		int 	readInNames(fstream &file, student roster[], const char fName[]);
-		int 	readInAssignments(fstream &file, student roster[],
-								 const char fileName[]);
+		int 	readInNames(fstream &file, int &size,
+                            student roster[], const char fName[]);
+		int 	readInAssignments(fstream &file, student roster[], int &size,
+                                  const char fileName[]);
 
 };

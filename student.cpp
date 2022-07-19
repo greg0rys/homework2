@@ -10,14 +10,15 @@ student::student() {
 		numAssignments = 0;
 }
 
-student::student(const char name[], const char gnum[], const char grade[],
-					const int size, const int capacity) {
-		strcpy(this->name, name);
-		strcpy(this->gnum, gnum);
-		strcpy(this->grade, grade);
-		this->size = size;
-		this->capacity = capacity;
-}
+//student::student(const char name[], const char gnum[], const char grade[],
+//					const int size, const int capacity) {
+//		strcpy(this->name, name);
+//		strcpy(this->gnum, gnum);
+//		strcpy(this->grade, grade);
+//		this->size = size;
+//		this->capacity = capacity;
+//        this->numAssignments = 0;
+//}
 
 // load in files with data about students
 void student::load(fstream &file, student roster[], int &size, int &capacity) {
@@ -36,9 +37,9 @@ void student::load(fstream &file, student roster[], int &size, int &capacity) {
 	cout << "Enter the name of the assignments file up to 30 characters: ";
 	cin.getline(assignmentsFile, MAX_CHARS);	
 
-	numberOfGnums = readInGnums(file,gnumFile);
-	numberOfStudentsAdded = readInNames(file,namesFile);
-	numberOfAssignmentsLoaded = readInAssignments(file,assignmentsFile);
+	numberOfGnums = readInGnums(file,size,capacity,roster, gnumFile);
+	numberOfStudentsAdded = readInNames(file,roster, size, namesFile);
+	numberOfAssignmentsLoaded = readInAssignments(file,roster, size,assignmentsFile);
 
 	cout << "[" << numberOfGnums << " G-Numbers loaded ]" << endl;
 	cout << "[" << numberOfStudentsAdded << " names added to the roster ]"
@@ -224,10 +225,9 @@ int student::getNumberOfAssignments() {
 //add a new assignment to this students submissions
 void student::addSubmission(fstream &inFile, student roster[]) {
 	int counter = 0;
-	char name[MAX_CHARS + 1];
-	char gnum[MAX_CHARS + 1];
+	char name[MAX_CHARS + 1] ={0}
+	char gnum[MAX_CHARS + 1] = {0};
 	assignment assignment;
-	
 	file.getline(name, MAX_CHARS);
 
 	while(!file.eof() && counter != size){
