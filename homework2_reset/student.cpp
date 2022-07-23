@@ -1,5 +1,6 @@
 #include "student.h"
 
+// default constructor init a student object to empty fields.
 Student::Student() {
     memset(name, 0, MAX_CHARS);
     memset(gnum, 0, MAX_CHARS);
@@ -9,14 +10,27 @@ Student::Student() {
     numAssignments = 0;
 }
 
+/**
+ * Get the name field of this student object
+ * @param name a char pointer in which we can copy this
+ * objs current name into.
+ */
 void Student::GetName(char * name) const {
     strcpy(name, this->name);
 }
 
+/**
+ * Set the name of this current student object
+ * @param name the name we wish to change too.
+ */
 void Student::SetName(const char name[]) {
     strcpy(this->name, name);
 }
 
+/**
+ * Get the grade of this student object.
+ * @param grade
+ */
 void Student::GetGrade(char * grade) const {
     strcpy(grade, this->grade);
 }
@@ -70,7 +84,7 @@ void Student::load(fstream &file, Student roster[], int &size, int &capacity) {
 int Student::ReadInGnums(fstream &file, int &size, int &capacity, Student roster[],
                          const char fileName[]) {
     char filePath[MAX_CHARS] = {0};
-    char gnum[MAX_CHARS + 1] = {0};
+    char gnum[MAX_CHARS];
     Student newStudent;
     int counter = 0;
     strcpy(filePath, "./");
@@ -82,14 +96,14 @@ int Student::ReadInGnums(fstream &file, int &size, int &capacity, Student roster
         return false;
     }
 
-    file.getline(gnum, MAX_CHARS, '\n');
+    file.getline(gnum, MAX_CHARS);
     newStudent.SetGnum(gnum);
     while(!file.eof() && size != capacity) {
         roster[size] = newStudent;
         size++;
         counter++;
 
-        file.getline(gnum, MAX_CHARS, '\n');
+        file.getline(gnum, MAX_CHARS);
         newStudent.SetGnum(gnum);
     }
 
@@ -98,38 +112,39 @@ int Student::ReadInGnums(fstream &file, int &size, int &capacity, Student roster
 
 }
 
-int Student::ReadInNames(fstream &file, Student *roster, int &size, const char *fileName) {
+int Student::ReadInNames(fstream &file, Student roster[], int &size, const char *fileName) {
     char filePath[MAX_CHARS] = {0};
     int counter = 0;
     Student newStudent;
-    char name[MAX_CHARS + 1];
-    char gnum[MAX_CHARS + 1];
-    char studentNumber[MAX_CHARS + 1];
+    char name[MAX_CHARS + 1] ={0};
+    char gnum[MAX_CHARS + 1] ={0};
+    char studentNumber[MAX_CHARS];
     strcpy(filePath, "./");
     strcat(filePath, fileName);
 
     file.open(filePath);
     if(!file) {
         cout << "Error opening: " << fileName << endl;
+        cout << endl << endl;
         return false;
     }
 
     file.getline(name, MAX_CHARS, ',');
     while(!file.eof() && counter < size) {
-        file.get();
         file.getline(gnum, MAX_CHARS);
 
-        for(auto i = 0; i < size; i++) {
-            newStudent = roster[i];
-            newStudent.GetGnum(studentNumber);
-            if(strstr(studentNumber, gnum) != NULL) {
-                newStudent.SetName(name);
+        for(int i = 0; i < size; i++) {
+            roster[i].GetGnum(studentNumber);
+            int result = strcmp(gnum, studentNumber);
+            if(strcmp(gnum, studentNumber) == 0) {
+                roster[i].SetName(name);
                 counter++;
             }
         }
 
         file.getline(name, MAX_CHARS, ',');
     }
+
 
     file.close();
     return counter;
@@ -159,7 +174,6 @@ int Student::ReadInAssignments(fstream &file, Student *roster, int &size, const 
     assignment.SetGnum(gnum);
 
     while(!file.eof() ) {
-        file.get();
         file.getline(name, MAX_CHARS, ',');
         assignment.SetName(name);
         file >> grade;
@@ -169,20 +183,22 @@ int Student::ReadInAssignments(fstream &file, Student *roster, int &size, const 
         assignment.SetWeight(weight);
         file.ignore(MAX_CHARS, '\n');
 
-        for(auto i = 0; i < size; i++) {
-            newStudent = roster[i];
-            newStudent.GetGnum(studentNumber);
+        for(int i = 0; i < size; i++) {
+            roster[i].GetGnum(studentNumber);
             assignment.GetGnum(gnum);
-            numberOfAssignments = newStudent.GetNumAssignments();
+            numberOfAssignments = roster[i].GetNumAssignments();
 
-            if(strstr(studentNumber, gnum) != NULL && numberOfAssignments < 10) {
-                newStudent.AddSubmission(newStudent, assignment, numberOfAssignments);
+            if(strcmp(gnum, studentNumber) == 0) {
+                roster[i].AddSubmission(roster[i], assignment, numberOfAssignments);
+                numberOfAssignments+=1;
+                roster[i].SetNumAssignments(numberOfAssignments);
                 counter++;
             }
 
         }
 
         file.getline(gnum, MAX_CHARS, ',');
+        assignment.SetGnum(gnum);
     }
 
     file.close();
@@ -192,23 +208,40 @@ int Student::ReadInAssignments(fstream &file, Student *roster, int &size, const 
 
 void Student::AddSubmission(Student &student, Assignment &assignment,
                             int numOfAssignments){
-    char name[MAX_CHARS + 1] = {0};
+    char name[MAX_CHARS + 1];
+    int grade = 0;
+    float weight = 0.00;
     student.GetName(name);
 
     if(numOfAssignments < MAX_SUBMISSIONS) {
         student.submissions[numOfAssignments] = assignment;
     }
     else {
-        cout << name << " alread has " << MAX_SUBMISSIONS << endl;
+        cout << name << " already has " << MAX_SUBMISSIONS << endl;
+    }
+
+    for(int i = 0; i < numOfAssignments; i++) {
+        cout << endl << endl;
+        cout << name << endl;
+        student.submissions[i].GetName(name);
+        grade = student.submissions[i].GetGrade();
+        weight = student.submissions[i].GetWeight();
+        cout << "\t" << name << " " << grade <<  " " << weight << endl;
     }
 }
 void Student::display(Student roster[], int size) {
     Student newStudent;
     char name[MAX_CHARS + 1] = {0};
-    for(auto i = 0; i < size; i++) {
-        roster[i].GetName(name);
+    char gnum[MAX_CHARS + 1] = {0};
+    int num = 0;
 
+    for(int i = 0; i < size; i++) {
+        roster[i].GetName(name);
+        roster[i].GetGnum(gnum);
+        num = roster[i].GetNumAssignments();
         cout << name << endl;
+        cout.width(10);
+        cout << gnum << " has: " << num << endl;
     }
 
 }

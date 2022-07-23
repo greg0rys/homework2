@@ -1,10 +1,10 @@
 #include "assignment.h"
 
 Assignment::Assignment() {
-    memset(name, 0, 1);
+    memset(name, 0, MAX_CHAR + 1);
     grade = 0;
     weight = 0.00;
-    memset(gnum, 0 , 1);
+    memset(gnum, 0 , MAX_CHAR + 1);
 
 }
 
