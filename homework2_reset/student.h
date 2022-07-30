@@ -22,12 +22,13 @@ public:
     void SetGnum(const char gnum[]);
     void SetNumAssignments(int numAssignments);
     int GetNumAssignments() const;
-
+    void GetSubmissions(Assignment array[]);
     void load(fstream &file, Student roster[], int &size, int &capacity);
     void display(Student roster[], int size);
     void gpa(Student roster[], int size);
     void pct(Student roster[], int size);
     void AddSubmission(Student &student, Assignment &assignment, int numOfAssignments);
+    void GetWeightedGrade(Student &student);
 
 private:
     char name[MAX_CHARS + 1];

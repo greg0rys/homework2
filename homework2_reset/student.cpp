@@ -192,11 +192,9 @@ int Student::ReadInAssignments(fstream &file, Student *roster, int &size, const 
                 roster[i].AddSubmission(roster[i], assignment, numberOfAssignments);
                 numberOfAssignments+=1;
                 roster[i].SetNumAssignments(numberOfAssignments);
-                counter++;
+                counter += roster[i].GetNumAssignments();
             }
-
         }
-
         file.getline(gnum, MAX_CHARS, ',');
         assignment.SetGnum(gnum);
     }
@@ -220,36 +218,134 @@ void Student::AddSubmission(Student &student, Assignment &assignment,
         cout << name << " already has " << MAX_SUBMISSIONS << endl;
     }
 
-    for(int i = 0; i < numOfAssignments; i++) {
-        cout << endl << endl;
-        cout << name << endl;
-        student.submissions[i].GetName(name);
-        grade = student.submissions[i].GetGrade();
-        weight = student.submissions[i].GetWeight();
-        cout << "\t" << name << " " << grade <<  " " << weight << endl;
-    }
 }
 void Student::display(Student roster[], int size) {
-    Student newStudent;
     char name[MAX_CHARS + 1] = {0};
     char gnum[MAX_CHARS + 1] = {0};
     int num = 0;
+    Assignment list[10];
+    int assignmentGrade = 0;
+    float assignmentWeight = 0;
+    char grade[MAX_CHARS] = {0};
 
     for(int i = 0; i < size; i++) {
+        roster[i].GetWeightedGrade(roster[i]);
         roster[i].GetName(name);
         roster[i].GetGnum(gnum);
+        roster[i].GetGrade(grade);
         num = roster[i].GetNumAssignments();
-        cout << name << endl;
-        cout.width(10);
-        cout << gnum << " has: " << num << endl;
+        roster[i].GetSubmissions(list);
+
+        cout << gnum << " " <<   name << " Final Grade: " << grade << endl;
+        for(int i = 0; i < num; i++){
+            cout.width(5);
+            assignmentGrade = list[i].GetGrade();
+            assignmentWeight = list[i].GetWeight() * 100;
+            list[i].GetName(name);
+            cout << assignmentGrade << " " <<  "(" << assignmentWeight << "%) " << name << endl;
+        }
     }
 
 }
 
 void Student::gpa(Student roster[], int size) {
-    cout << "in gpa" << endl;
+    double averageGpa = 0;
+    char studentGrade[MAX_CHARS];
+    Student tempStudent;
+    for(int i = 0; i < size; i++) {
+        tempStudent = roster[i];
+        tempStudent.GetWeightedGrade(tempStudent);
+        tempStudent.GetGrade(studentGrade);
+        if(strcmp(studentGrade, "A") == 0) {
+            averageGpa += 4;
+        }
+        else if(strcmp(studentGrade, "B") == 0) {
+            averageGpa += 3;
+        }
+        else if(strcmp(studentGrade, "C") == 0) {
+            averageGpa += 2;
+        }
+        else if(strcmp(studentGrade, "D") == 0) {
+            averageGpa += 1;
+        }
+        else {
+            continue; // current student failed go to next.
+        }
+    }
+    averageGpa /= size;
+    cout.precision(4);
+    cout << endl;
+    cout << "Average GPA for a class of " << size
+         << " students is: " << averageGpa << endl;
+    cout << endl << endl;
+}
+
+void Student::GetSubmissions(Assignment * array) {
+    for(int i=0; i < MAX_SUBMISSIONS; i++) {
+        array[i] = this->submissions[i];
+    }
+}
+
+// change the name of this to calculate student grade.
+void Student::GetWeightedGrade(Student &student)  {
+    int grade = 0;
+    float weight = 0.00;
+    double finalGrade = 0.00;
+    int num = student.GetNumAssignments();
+    Assignment list[num + 1];
+    student.GetSubmissions(list);
+
+    for(int i=0; i < num; i++){
+        grade = list[i].GetGrade();
+        weight = list[i].GetWeight();
+        finalGrade += grade * weight;
+        if(finalGrade >= 3.4) {
+            student.SetGrade("A");
+        }
+        else if(finalGrade >= 2.8 && finalGrade <= 3.4) {
+            student.SetGrade("B");
+        }
+        else if(finalGrade >= 2.0 && finalGrade <= 2.8) {
+            student.SetGrade("C");
+        }
+        else if(finalGrade >= 1.2 && finalGrade <= 2.0) {
+            student.SetGrade("D");
+        }
+        else {
+            student.SetGrade("F");
+        }
+    }
+
 }
 
 void Student::pct(Student roster[], int size) {
-    cout <<"PCT" << endl;
+    double totalPassed = 0;
+    double totalFailed = 0;
+    double totalAudits = 0;
+    char studentGrade[MAX_CHARS] = {0};
+
+    for(int i = 0; i < size; i++){
+        roster[i].GetWeightedGrade(roster[i]);
+        roster[i].GetGrade(studentGrade);
+        if(strcmp(studentGrade, "A") == 0 || strcmp(studentGrade,"B") == 0 || strcmp(studentGrade,"C") == 0){
+            totalPassed++;
+        }
+        else if(strcmp(studentGrade, "AUD") == 0) {
+            totalAudits++;
+        }
+        else {
+            totalFailed++;
+        }
+    }
+    cout << endl;
+    cout << "Total Students: " << size << " (100%)" << endl;
+    cout << "Total Completions: " << totalPassed <<
+        " (" << (totalPassed / size) * 100 << "%)" << endl;
+    cout << "Passing Grades: " << totalPassed <<
+         " (" << (totalPassed / size) * 100 << "%)" << endl;
+    cout << "Non-Passing Grades: " << totalFailed <<
+         " (" << (totalFailed/ size) * 100 << "%)" << endl;
+    cout << "AUD Grades: " << totalAudits<<
+         " (" << (totalAudits / size) * 100 << "%)" << endl;
+
 }

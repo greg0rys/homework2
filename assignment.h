@@ -11,8 +11,8 @@ class assignment
 		assignment();
 		assignment(const char name[], int grade, float weight,
 				   const char gnum[]);
-		void getName(char name[]) const;.
-		int getGrade() const;.
+		void getName(char name[]) const;
+		int getGrade() const;
 		float getWeight() const;
 		void getGnum(char gnum[]) const;.
 		void setName(const char name[]);.
